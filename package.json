@@ -18,7 +18,7 @@
     "lint:eslint": "eslint --ext .js,.vue,.ts --fix .",
     "lint:md": "markdownlint docs/ --fix",
     "lint:prettier": "prettier --check --write .",
-    "lint:stylelint": "stylelint packages/*/src/**/*.scss --fix",
+    "lint:stylelint": "stylelint packages/*/src/**/*.scss packages/*/src/**/*.css --fix",
     "prepare": "husky install",
     "server:dev": "vercel dev ./example --listen 9090",
     "test": "vitest"
