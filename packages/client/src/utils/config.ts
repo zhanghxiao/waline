@@ -1,3 +1,4 @@
+import { MarkdownParser, getMarkdownRenderer } from './markdown.js';
 import { decodePath, isLinkHttp, removeEndingSplash } from './path.js';
 import {
   DEFAULT_EMOJI,
@@ -39,10 +40,9 @@ export interface WalineConfig
   wordLimit: [number, number] | false;
   reaction: string[];
   emoji: Exclude<WalineProps['emoji'], boolean | undefined>;
-  highlighter: Exclude<WalineProps['highlighter'], true | undefined>;
   imageUploader: Exclude<WalineProps['imageUploader'], true | undefined>;
-  texRenderer: Exclude<WalineProps['texRenderer'], true | undefined>;
   search: Exclude<WalineProps['search'], true | undefined>;
+  markdownRenderer: MarkdownParser;
 }
 
 export const getServerURL = (serverURL: string): string => {
@@ -96,8 +96,10 @@ export const getConfig = ({
   meta: getMeta(meta),
   requiredMeta: getMeta(requiredMeta),
   imageUploader: fallback(imageUploader, defaultUploadImage),
-  highlighter: fallback(highlighter, defaultHighlighter),
-  texRenderer: fallback(texRenderer, defaultTeXRenderer),
+  markdownRenderer: getMarkdownRenderer({
+    highlighter: fallback(highlighter, defaultHighlighter),
+    texRenderer: fallback(texRenderer, defaultTeXRenderer),
+  }),
   lang: Object.keys(DEFAULT_LOCALES).includes(lang) ? lang : 'en-US',
   dark,
   emoji: typeof emoji === 'boolean' ? (emoji ? DEFAULT_EMOJI : []) : emoji,

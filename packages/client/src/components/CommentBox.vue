@@ -338,7 +338,6 @@ import {
   isValidEmail,
   getWordNumber,
   parseEmoji,
-  parseMarkdown,
   userAgent,
 } from '../utils/index.js';
 
@@ -774,14 +773,10 @@ onMounted(() => {
   watch(
     () => editor.value,
     (value) => {
-      const { highlighter, texRenderer } = config.value;
-
       content.value = value;
-      previewText.value = parseMarkdown(value, {
-        emojiMap: emoji.value.map,
-        highlighter,
-        texRenderer,
-      });
+      previewText.value = config.value.markdownRenderer(
+        parseEmoji(value, emoji.value.map),
+      );
       wordNumber.value = getWordNumber(value);
 
       if (value) autosize(editorRef.value!);

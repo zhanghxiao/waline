@@ -47,12 +47,6 @@ export default [
         format: 'umd',
         name: 'Waline',
         sourcemap: true,
-        // plugins: [babelPlugin, terser()],
-      },
-      {
-        file: './dist/waline.cjs',
-        format: 'cjs',
-        sourcemap: true,
       },
       {
         file: './dist/waline.mjs',
@@ -68,7 +62,6 @@ export default [
     input: './src/entries/full.ts',
     output: [
       { file: './dist/waline.d.ts', format: 'esm' },
-      { file: './dist/waline.d.cts', format: 'esm' },
       { file: './dist/waline.d.mts', format: 'esm' },
     ],
     plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
@@ -78,11 +71,6 @@ export default [
   {
     input: './src/entries/full.ts',
     output: [
-      {
-        file: './dist/shim.cjs',
-        format: 'cjs',
-        sourcemap: true,
-      },
       {
         file: './dist/shim.mjs',
         format: 'esm',
@@ -103,10 +91,7 @@ export default [
   // shim declaration files
   {
     input: './src/entries/full.ts',
-    output: [
-      { file: './dist/shim.d.cts', format: 'esm' },
-      { file: './dist/shim.d.mts', format: 'esm' },
-    ],
+    output: [{ file: './dist/shim.d.ts', format: 'esm' }],
     plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
   },
 
@@ -138,11 +123,6 @@ export default [
         sourcemap: true,
       },
       {
-        file: './dist/comment.cjs',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
         file: './dist/comment.mjs',
         format: 'esm',
         sourcemap: true,
@@ -156,7 +136,6 @@ export default [
     input: './src/entries/comment.ts',
     output: [
       { file: './dist/comment.d.ts', format: 'esm' },
-      { file: './dist/comment.d.cts', format: 'esm' },
       { file: './dist/comment.d.mts', format: 'esm' },
     ],
     plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
@@ -173,11 +152,6 @@ export default [
         sourcemap: true,
       },
       {
-        file: './dist/pageview.cjs',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
         file: './dist/pageview.mjs',
         format: 'esm',
         sourcemap: true,
@@ -191,7 +165,6 @@ export default [
     input: './src/entries/pageview.ts',
     output: [
       { file: './dist/pageview.d.ts', format: 'esm' },
-      { file: './dist/pageview.d.cts', format: 'esm' },
       { file: './dist/pageview.d.mts', format: 'esm' },
     ],
     plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],

@@ -2,7 +2,7 @@ import { useStorage } from '@vueuse/core';
 
 import { type WalineEmojiConfig } from './config.js';
 import { removeEndingSplash } from './path.js';
-import { type WalineEmojiInfo } from '../typings/index.js';
+import { WalineEmojiMaps, type WalineEmojiInfo } from '../typings/index.js';
 
 const hasVersion = (url: string): boolean =>
   Boolean(/@[0-9]+\.[0-9]+\.[0-9]+/.test(url));
@@ -71,3 +71,10 @@ export const getEmojis = (
 
     return emojiConfig;
   });
+
+export const parseEmoji = (text = '', emojiMap: WalineEmojiMaps = {}): string =>
+  text.replace(/:(.+?):/g, (placeholder, key: string) =>
+    emojiMap[key]
+      ? `<img class="wl-emoji" src="${emojiMap[key]}" alt="${key}">`
+      : placeholder,
+  );
