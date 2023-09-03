@@ -1,3 +1,5 @@
+import { WalineResponse } from './typings.js';
+
 export interface BaseAPIOptions {
   /**
    * Waline 服务端地址
@@ -14,22 +16,6 @@ export interface BaseAPIOptions {
   lang: string;
 }
 
-export interface ErrorStatusResponse {
-  /**
-   * 错误代码
-   *
-   * Error number
-   */
-  errno: number;
-
-  /**
-   * 错误消息
-   *
-   * Error msg
-   */
-  errmsg: string;
-}
-
 export const JSON_HEADERS: Record<string, string> = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'Content-Type': 'application/json',
@@ -38,12 +24,9 @@ export const JSON_HEADERS: Record<string, string> = {
 export const getFetchPrefix = (serverURL: string): string =>
   `${serverURL.replace(/\/?$/, '/')}api/`;
 
-export const errorCheck = <T extends ErrorStatusResponse>(
-  data: T,
-  name = '',
-): T => {
+export const errorCheck = <T>(data: WalineResponse<T>, name = ''): T => {
   if (typeof data === 'object' && data.errno)
     throw new TypeError(`${name} failed with ${data.errno}: ${data.errmsg}`);
 
-  return data;
+  return data.data;
 };

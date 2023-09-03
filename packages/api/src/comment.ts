@@ -1,11 +1,11 @@
 import {
+  type WalineResponse,
   type WalineComment,
   type WalineCommentData,
   type WalineRootComment,
 } from './typings.js';
 import {
   type BaseAPIOptions,
-  type ErrorStatusResponse,
   JSON_HEADERS,
   errorCheck,
   getFetchPrefix,
@@ -55,7 +55,7 @@ export interface GetCommentOptions extends BaseAPIOptions {
   signal?: AbortSignal;
 }
 
-export interface GetCommentResponse extends ErrorStatusResponse {
+export interface GetCommentResponse {
   /**
    * 评论数量
    *
@@ -112,8 +112,8 @@ export const getComment = ({
     )}&pageSize=${pageSize}&page=${page}&lang=${lang}&sortBy=${sortBy}`,
     { signal, headers },
   )
-    .then((resp) => <Promise<GetCommentResponse>>resp.json())
-    .then((data) => errorCheck(data, 'Get comment data'));
+    .then((resp) => <Promise<WalineResponse<GetCommentResponse>>>resp.json())
+    .then((data) => errorCheck(data, 'Get comment'));
 };
 
 export interface AddCommentOptions extends BaseAPIOptions {
@@ -132,7 +132,7 @@ export interface AddCommentOptions extends BaseAPIOptions {
   comment: WalineCommentData;
 }
 
-export interface AddCommentResponse extends ErrorStatusResponse {
+export interface AddCommentResponse {
   /**
    * 渲染好的评论数据
    *
@@ -158,7 +158,9 @@ export const addComment = ({
     method: 'POST',
     headers,
     body: JSON.stringify(comment),
-  }).then((resp) => <Promise<AddCommentResponse>>resp.json());
+  })
+    .then((resp) => <Promise<WalineResponse<AddCommentResponse>>>resp.json())
+    .then((data) => errorCheck(data, 'Add comment'));
 };
 
 export interface DeleteCommentOptions extends BaseAPIOptions {
@@ -177,7 +179,7 @@ export interface DeleteCommentOptions extends BaseAPIOptions {
   objectId: string | number;
 }
 
-export interface DeleteCommentResponse extends ErrorStatusResponse {
+export interface DeleteCommentResponse {
   data: '';
 }
 
@@ -193,7 +195,7 @@ export const deleteComment = ({
       Authorization: `Bearer ${token}`,
     },
   })
-    .then((resp) => <Promise<DeleteCommentResponse>>resp.json())
+    .then((resp) => <Promise<WalineResponse<DeleteCommentResponse>>>resp.json())
     .then((resp) => errorCheck(resp, 'Delete comment'));
 
 interface UpdateWalineCommentData extends Partial<WalineCommentData> {
@@ -243,7 +245,7 @@ export interface UpdateCommentOptions extends BaseAPIOptions {
   comment?: UpdateWalineCommentData;
 }
 
-export interface UpdateCommentResponse extends ErrorStatusResponse {
+export interface UpdateCommentResponse {
   /**
    * 更新后的评论数据
    *
@@ -267,5 +269,5 @@ export const updateComment = ({
     },
     body: JSON.stringify(comment),
   })
-    .then((resp) => <Promise<UpdateCommentResponse>>resp.json())
+    .then((resp) => <Promise<WalineResponse<UpdateCommentResponse>>>resp.json())
     .then((resp) => errorCheck(resp, 'Update comment'));

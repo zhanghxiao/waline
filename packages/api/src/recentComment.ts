@@ -1,5 +1,5 @@
-import { type BaseWalineResponseComment } from './typings.js';
-import { type BaseAPIOptions, getFetchPrefix } from './utils.js';
+import { WalineResponse, type BaseWalineResponseComment } from './typings.js';
+import { type BaseAPIOptions, getFetchPrefix, errorCheck } from './utils.js';
 
 export interface GetRecentCommentOptions extends BaseAPIOptions {
   /**
@@ -52,5 +52,7 @@ export const getRecentComment = ({
       signal,
       headers,
     },
-  ).then((resp) => <Promise<RecentCommentData[]>>resp.json());
+  )
+    .then((resp) => <Promise<WalineResponse<RecentCommentData[]>>>resp.json())
+    .then((data) => errorCheck(data, 'recent comment'));
 };

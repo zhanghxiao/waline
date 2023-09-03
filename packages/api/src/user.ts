@@ -1,10 +1,5 @@
-import { type WalineComment } from './typings.js';
-import {
-  type BaseAPIOptions,
-  type ErrorStatusResponse,
-  errorCheck,
-  getFetchPrefix,
-} from './utils.js';
+import { WalineResponse, type WalineComment } from './typings.js';
+import { type BaseAPIOptions, errorCheck, getFetchPrefix } from './utils.js';
 
 export interface GetUserListOptions extends BaseAPIOptions {
   /**
@@ -27,7 +22,7 @@ export interface WalineUser
   count: number;
 }
 
-export interface GetUserListResponse extends ErrorStatusResponse {
+export interface GetUserListResponse {
   data: WalineUser[];
 }
 
@@ -40,6 +35,6 @@ export const getUserList = ({
   fetch(`${getFetchPrefix(serverURL)}user?pageSize=${pageSize}&lang=${lang}`, {
     signal,
   })
-    .then((resp) => <Promise<GetUserListResponse>>resp.json())
+    .then((resp) => <Promise<WalineResponse<GetUserListResponse>>>resp.json())
     .then((resp) => errorCheck(resp, 'user list'))
     .then((resp) => resp.data);

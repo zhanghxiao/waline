@@ -1,4 +1,5 @@
-import { type BaseAPIOptions, getFetchPrefix } from './utils.js';
+import { WalineResponse } from './typings.js';
+import { type BaseAPIOptions, getFetchPrefix, errorCheck } from './utils.js';
 
 export interface GetCommentCountOptions extends BaseAPIOptions {
   /**
@@ -16,18 +17,19 @@ export interface GetCommentCountOptions extends BaseAPIOptions {
   signal?: AbortSignal;
 }
 
+export type WalineCommentCount = number[];
+
 export const fetchCommentCount = ({
   serverURL,
   lang,
   paths,
   signal,
-}: GetCommentCountOptions): Promise<number[]> =>
+}: GetCommentCountOptions): Promise<WalineCommentCount> =>
   fetch(
     `${getFetchPrefix(serverURL)}comment?type=count&url=${encodeURIComponent(
       paths.join(','),
     )}&lang=${lang}`,
     { signal },
   )
-    .then((resp) => <Promise<number | number[]>>resp.json())
-    // TODO: Improve this API
-    .then((counts) => (Array.isArray(counts) ? counts : [counts]));
+    .then((resp) => <Promise<WalineResponse<number[]>>>resp.json())
+    .then((data) => errorCheck(data, 'comment count'));

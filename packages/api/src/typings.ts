@@ -142,6 +142,7 @@ export interface BaseWalineResponseComment {
    *
    * @description 仅在登录用户时可用
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   user_id?: string;
 
   /**
@@ -243,3 +244,9 @@ export interface WalineRootComment extends BaseWalineResponseComment {
 }
 
 export type WalineComment = WalineRootComment | WalineChildComment;
+
+export interface WalineResponse<T> {
+  data: T;
+  errmsg: string;
+  errno: number;
+}

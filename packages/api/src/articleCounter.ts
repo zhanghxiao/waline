@@ -1,4 +1,10 @@
-import { type BaseAPIOptions, JSON_HEADERS, getFetchPrefix } from './utils.js';
+import { type WalineResponse } from './typings.js';
+import {
+  type BaseAPIOptions,
+  JSON_HEADERS,
+  getFetchPrefix,
+  errorCheck,
+} from './utils.js';
 
 export interface GetArticleCounterOptions extends BaseAPIOptions {
   /**
@@ -23,11 +29,7 @@ export interface GetArticleCounterOptions extends BaseAPIOptions {
   signal?: AbortSignal;
 }
 
-export type GetArticleCounterResponse =
-  | Record<string, number>[]
-  | Record<string, number>
-  | number[]
-  | number;
+export type GetArticleCounterResponse = Record<string, number>[] | number[];
 
 export const getArticleCounter = ({
   serverURL,
@@ -41,7 +43,11 @@ export const getArticleCounter = ({
       paths.join(','),
     )}&type=${encodeURIComponent(type.join(','))}&lang=${lang}`,
     { signal },
-  ).then((resp) => <Promise<GetArticleCounterResponse>>resp.json());
+  )
+    .then(
+      (resp) => <Promise<WalineResponse<GetArticleCounterResponse>>>resp.json(),
+    )
+    .then((data) => errorCheck(data, 'get counter'));
 
 export interface UpdateArticleCounterOptions extends BaseAPIOptions {
   /**
@@ -79,4 +85,6 @@ export const updateArticleCounter = ({
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify({ path, type, action }),
-  }).then((resp) => <Promise<number>>resp.json());
+  })
+    .then((resp) => <Promise<WalineResponse<number>>>resp.json())
+    .then((data) => errorCheck(data, 'update counter'));

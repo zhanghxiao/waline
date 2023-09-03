@@ -23,17 +23,13 @@ export const getPageview = ({
   paths,
   signal,
 }: GetPageviewOptions): Promise<number[]> =>
-  getArticleCounter({
+  <Promise<number[]>>getArticleCounter({
     serverURL,
     lang,
     paths,
     type: ['time'],
     signal,
-  })
-    // TODO: Improve this API
-    .then((counts) => (Array.isArray(counts) ? counts : [counts])) as Promise<
-    number[]
-  >;
+  });
 
 export interface UpdatePageviewOptions extends BaseAPIOptions {
   /**
