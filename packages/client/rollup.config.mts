@@ -1,11 +1,8 @@
-import { babel, getBabelOutputPlugin } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import terser from '@rollup/plugin-terser';
 import vue from '@vitejs/plugin-vue';
 import dts from 'rollup-plugin-dts';
-import typescript from 'rollup-plugin-typescript2';
 import esbuild from 'rollup-plugin-esbuild';
 
 import pkg from './package.json' assert { type: 'json' };
@@ -39,11 +36,6 @@ const commonOptions = {
   ],
   treeshake: 'smallest',
 };
-
-const babelPlugin = getBabelOutputPlugin({
-  moduleId: 'Waline',
-  presets: [['@babel/preset-env', { modules: 'umd' }]],
-});
 
 export default [
   // full package
