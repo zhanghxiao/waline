@@ -1,13 +1,15 @@
 import {
+  type WalineComment,
+  type WalineCommentData,
+  type WalineRootComment,
+} from './typings.js';
+import {
   type BaseAPIOptions,
   type ErrorStatusResponse,
   JSON_HEADERS,
   errorCheck,
+  getFetchPrefix,
 } from './utils.js';
-import {
-  type WalineComment,
-  type WalineCommentData,
-} from '../typings/index.js';
 
 export interface GetCommentOptions extends BaseAPIOptions {
   /**
@@ -80,7 +82,7 @@ export interface GetCommentResponse extends ErrorStatusResponse {
    *
    * Comment Data
    */
-  data: WalineComment[];
+  data: WalineRootComment[];
 
   /**
    * 页面总数
@@ -105,7 +107,7 @@ export const getComment = ({
   if (token) headers.Authorization = `Bearer ${token}`;
 
   return fetch(
-    `${serverURL}/comment?path=${encodeURIComponent(
+    `${getFetchPrefix(serverURL)}comment?path=${encodeURIComponent(
       path,
     )}&pageSize=${pageSize}&page=${page}&lang=${lang}&sortBy=${sortBy}`,
     { signal, headers },
@@ -152,7 +154,7 @@ export const addComment = ({
 
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  return fetch(`${serverURL}/comment?lang=${lang}`, {
+  return fetch(`${getFetchPrefix(serverURL)}comment?lang=${lang}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(comment),
@@ -160,7 +162,18 @@ export const addComment = ({
 };
 
 export interface DeleteCommentOptions extends BaseAPIOptions {
+  /**
+   * Auth token
+   *
+   * 认证令牌
+   */
   token: string;
+
+  /**
+   * Comment objectId to be deleted
+   *
+   * 待删除的评论对象 ID
+   */
   objectId: string | number;
 }
 
@@ -174,7 +187,7 @@ export const deleteComment = ({
   token,
   objectId,
 }: DeleteCommentOptions): Promise<DeleteCommentResponse> =>
-  fetch(`${serverURL}/comment/${objectId}?lang=${lang}`, {
+  fetch(`${getFetchPrefix(serverURL)}comment/${objectId}?lang=${lang}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -246,7 +259,7 @@ export const updateComment = ({
   objectId,
   comment,
 }: UpdateCommentOptions): Promise<UpdateCommentResponse> =>
-  fetch(`${serverURL}/comment/${objectId}?lang=${lang}`, {
+  fetch(`${getFetchPrefix(serverURL)}comment/${objectId}?lang=${lang}`, {
     method: 'PUT',
     headers: {
       ...JSON_HEADERS,

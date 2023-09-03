@@ -27,7 +27,11 @@
 
         <span v-if="comment.label" class="wl-badge" v-text="comment.label" />
 
-        <span v-if="comment.sticky" class="wl-badge" v-text="locale.sticky" />
+        <span
+          v-if="comment['sticky']"
+          class="wl-badge"
+          v-text="locale.sticky"
+        />
 
         <span
           v-if="comment.level !== undefined && comment.level >= 0"
@@ -123,7 +127,7 @@
         </span>
 
         <button
-          v-if="isAdmin && !comment.rid"
+          v-if="isAdmin && !('rid' in comment)"
           type="submit"
           class="wl-btn wl-sticky"
           @click="$emit('sticky', comment)"
@@ -151,7 +155,7 @@
         />
       </div>
 
-      <div v-if="comment.children" class="wl-quote">
+      <div v-if="'children' in comment" class="wl-quote">
         <!-- FIXME: This is a upstream bug -->
         <!-- eslint-disable-next-line vue/no-undef-components -->
         <CommentCard
@@ -177,6 +181,7 @@
 
 <script setup lang="ts">
 import { useNow } from '@vueuse/core';
+import { type WalineComment, type WalineCommentStatus } from '@waline/api';
 import { type ComputedRef, computed, inject } from 'vue';
 
 import CommentBox from './CommentBox.vue';
@@ -188,10 +193,6 @@ import {
   VerifiedIcon,
 } from './Icons.js';
 import { useLikeStorage, useUserInfo } from '../composables/index.js';
-import {
-  type WalineComment,
-  type WalineCommentStatus,
-} from '../typings/index.js';
 import { type WalineConfig, getTimeAgo, isLinkHttp } from '../utils/index.js';
 
 const props = withDefaults(

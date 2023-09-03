@@ -25,11 +25,6 @@
       "require": "./dist/shim.cjs",
       "default": "./dist/shim.cjs"
     },
-    "./api": {
-      "types": "./dist/api.d.ts",
-      "require": "./dist/api.cjs",
-      "default": "./dist/api.mjs"
-    },
     "./component": {
       "default": "./dist/component.mjs",
       "types": "./dist/component.d.ts"
@@ -54,11 +49,6 @@
     },
     "./waline.css": "./dist/waline.css",
     "./waline-meta.css": "./dist/waline-meta.css",
-    "./dist/api": {
-      "types": "./dist/api.d.ts",
-      "require": "./dist/api.cjs",
-      "default": "./dist/api.mjs"
-    },
     "./dist/component": {
       "default": "./dist/component.mjs",
       "types": "./dist/component.d.ts"
@@ -84,23 +74,21 @@
     "./dist/waline.css": "./dist/waline.css",
     "./dist/waline-meta.css": "./dist/waline-meta.css",
     "./dist/*": "./dist/*",
-    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "main": "./dist/shim.cjs",
   "module": "./dist/shim.mjs",
-  "browser": "./dist/legacy.umd.js",
+  "browser": "./dist/waline.js",
   "types": "./dist/shim.d.mts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "pnpm rollup && pnpm style",
     "clean": "rimraf ./dist",
     "dev": "vite",
     "prepublishOnly": "pnpm clean && pnpm build",
-    "rollup": "rollup -c",
+    "rollup": "rollup -c rollup.config.mts --configPlugin esbuild",
     "style": "pnpm style:main && pnpm style:meta",
     "style:main": "sass ./src/styles/index.scss ./dist/waline.css --style=compressed",
     "style:meta": "sass ./src/styles/meta.scss ./dist/waline-meta.css --style=compressed"
@@ -123,7 +111,11 @@
       "last 2 safari version"
     ]
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
+    "@waline/api": "workspace:*",
     "@vueuse/core": "^10.4.1",
     "autosize": "^6.0.1",
     "marked": "^8.0.0",
@@ -139,8 +131,5 @@
     "recaptcha-v3": "1.10.0",
     "user-agent-data-types": "0.3.1",
     "vite": "4.4.9"
-  },
-  "engines": {
-    "node": ">=16"
   }
 }

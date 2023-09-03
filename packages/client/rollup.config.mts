@@ -6,17 +6,24 @@ import terser from '@rollup/plugin-terser';
 import vue from '@vitejs/plugin-vue';
 import dts from 'rollup-plugin-dts';
 import typescript from 'rollup-plugin-typescript2';
+import esbuild from 'rollup-plugin-esbuild';
 
 import pkg from './package.json' assert { type: 'json' };
 
-const version = pkg.version;
+const { version } = pkg;
+
 const commonOptions = {
   plugins: [
     vue({
       isProduction: true,
       template: { compilerOptions: { comments: false } },
     }),
-    typescript(),
+    esbuild({
+      charset: 'utf8',
+      target: ['chrome79', 'firefox79', 'edge79', 'safari13', 'node16'],
+      minify: true,
+    }),
+    // typescript(),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env["NODE_ENV"]': JSON.stringify('production'),
@@ -28,7 +35,7 @@ const commonOptions = {
     }),
     nodeResolve({ preferBuiltins: true }),
     commonjs(),
-    terser(),
+    // terser(),
   ],
   treeshake: 'smallest',
 };
@@ -39,62 +46,16 @@ const babelPlugin = getBabelOutputPlugin({
 });
 
 export default [
-  // TODO: Remove this in future
-
-  // legacy package
-  {
-    input: './src/entries/legacy.ts',
-    output: [
-      {
-        file: './dist/legacy.umd.js',
-        format: 'umd',
-        name: 'Waline',
-        exports: 'default',
-        sourcemap: true,
-      },
-    ],
-    ...commonOptions,
-    plugins: [
-      vue({
-        isProduction: true,
-        template: { compilerOptions: { comments: false } },
-      }),
-      typescript(),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
-        'process.env["NODE_ENV"]': JSON.stringify('production'),
-        "process.env['NODE_ENV']": JSON.stringify('production'),
-        __VUE_OPTIONS_API__: false,
-        __VUE_PROD_DEVTOOLS__: false,
-        VERSION: JSON.stringify(version),
-        preventAssignment: false,
-      }),
-      nodeResolve({ preferBuiltins: true }),
-      commonjs(),
-      babel({
-        babelHelpers: 'bundled',
-        presets: [['@babel/preset-env']],
-      }),
-      terser(),
-    ],
-  },
-
-  // legacy declaration files
-  {
-    input: './src/entries/legacy.ts',
-    output: [{ file: './dist/legacy.umd.d.ts', format: 'esm' }],
-    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
-  },
-
   // full package
   {
     input: './src/entries/full.ts',
     output: [
       {
         file: './dist/waline.js',
-        format: 'esm',
+        format: 'umd',
+        name: 'Waline',
         sourcemap: true,
-        plugins: [babelPlugin, terser()],
+        // plugins: [babelPlugin, terser()],
       },
       {
         file: './dist/waline.cjs',
@@ -137,7 +98,14 @@ export default [
       },
     ],
     ...commonOptions,
-    external: ['@vueuse/core', 'autosize', 'marked', 'vue'],
+    external: [
+      '@vueuse/core',
+      '@waline/api',
+      'autosize',
+      'marked',
+      'recaptcha-v3',
+      'vue',
+    ],
   },
 
   // shim declaration files
@@ -160,41 +128,12 @@ export default [
         sourcemap: true,
       },
     ],
-    external: ['@vueuse/core', 'autosize', 'marked', 'vue'],
+    external: ['@vueuse/core', '@waline/api', 'autosize', 'marked', 'vue'],
     ...commonOptions,
   },
 
   // components declaration files
   // TODO: Generate declaration files
-
-  // api
-  {
-    input: './src/entries/api.ts',
-    output: [
-      {
-        file: './dist/api.cjs',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
-        file: './dist/api.mjs',
-        format: 'esm',
-        sourcemap: true,
-      },
-    ],
-    ...commonOptions,
-  },
-
-  // api declaration files
-  {
-    input: './src/entries/api.ts',
-    output: [
-      { file: './dist/api.d.ts', format: 'esm' },
-      { file: './dist/api.d.cts', format: 'esm' },
-      { file: './dist/api.d.mts', format: 'esm' },
-    ],
-    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
-  },
 
   // comment
   {
@@ -202,9 +141,9 @@ export default [
     output: [
       {
         file: './dist/comment.js',
-        format: 'esm',
+        format: 'umd',
+        name: 'Waline',
         sourcemap: true,
-        plugins: [babelPlugin, terser()],
       },
       {
         file: './dist/comment.cjs',
@@ -237,9 +176,9 @@ export default [
     output: [
       {
         file: './dist/pageview.js',
-        format: 'esm',
+        format: 'umd',
+        name: 'Waline',
         sourcemap: true,
-        plugins: [babelPlugin, terser()],
       },
       {
         file: './dist/pageview.cjs',

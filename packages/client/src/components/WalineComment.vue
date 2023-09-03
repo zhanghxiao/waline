@@ -89,18 +89,23 @@
 /* eslint-disable vue/require-prop-comment */
 /* eslint-disable vue/require-prop-types */
 import { useStyleTag } from '@vueuse/core';
+import {
+  type WalineComment,
+  type WalineCommentStatus,
+  type WalineRootComment,
+  deleteComment,
+  getComment,
+  updateComment,
+} from '@waline/api';
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue';
 
 import Reaction from './ArticleReaction.vue';
 import CommentBox from './CommentBox.vue';
 import CommentCard from './CommentCard.vue';
 import { LoadingIcon } from './Icons.js';
-import { deleteComment, getComment, updateComment } from '../api/index.js';
 import { useUserInfo, useLikeStorage } from '../composables/index.js';
 import {
-  type WalineComment,
   type WalineCommentSorting,
-  type WalineCommentStatus,
   type WalineProps,
 } from '../typings/index.js';
 import { getConfig, getDarkStyle } from '../utils/index.js';
@@ -152,7 +157,7 @@ const config = computed(() => getConfig(props as WalineProps));
 // eslint-disable-next-line vue/no-ref-object-destructure
 const commentSortingRef = ref(config.value.commentSorting);
 
-const data = ref<WalineComment[]>([]);
+const data = ref<WalineRootComment[]>([]);
 const reply = ref<WalineComment | null>(null);
 const edit = ref<WalineComment | null>(null);
 
@@ -226,7 +231,7 @@ const onSubmit = (comment: WalineComment): void => {
   if (edit.value) {
     edit.value.comment = comment.comment;
     edit.value.orig = comment.orig;
-  } else if (comment.rid) {
+  } else if ('rid' in comment) {
     const repliedComment = data.value.find(
       ({ objectId }) => objectId === comment.rid,
     );
@@ -265,7 +270,7 @@ const onStatusChange = async ({
 };
 
 const onSticky = async (comment: WalineComment): Promise<void> => {
-  if (comment.rid) return;
+  if ('rid' in comment) return;
 
   const { serverURL, lang } = config.value;
 
